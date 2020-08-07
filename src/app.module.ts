@@ -3,15 +3,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TasksModule } from './tasks/tasks.module';
 
-import { MongooseModule } from '@nestjs/mongoose';
+import { RedisModule } from './redis/redis.module';
+import { initMongo } from './mongo/mongo.initialization';
+import { CacheModule } from './cache/cache.module';
 
 @Module({
-  imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://admin:admin123@cluster0.y7bzx.mongodb.net/to-do?retryWrites=true&w=majority',
-    ),
-    TasksModule,
-  ],
+  imports: [initMongo(), TasksModule, CacheModule],
   controllers: [AppController],
   providers: [AppService],
 })
