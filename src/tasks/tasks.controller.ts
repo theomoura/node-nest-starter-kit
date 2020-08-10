@@ -26,13 +26,13 @@ export class TasksController {
 
   @Post()
   async create(@Body() task: Task): Promise<Task> {
-    return this.taskService.create(task);
+    return this.taskService.createTask(task);
   }
 
   @Put(':id')
   async update(@Param('id') id: string, @Body() task: Task): Promise<Task> {
-    task.id = id;
-    return this.taskService.update(task);
+    task._id = id;
+    return this.taskService.updateTask(task);
   }
 
   @Delete(':id')
