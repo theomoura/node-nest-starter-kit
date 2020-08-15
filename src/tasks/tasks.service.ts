@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Task } from './task';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CacheIntegration } from '../cache/cache.manager';
+import { CacheIntegration, CacheType } from '../cache/cache.integration';
 import { MongoDao } from '../mongo/mongo.dao';
 
 @Injectable()
@@ -19,15 +19,15 @@ export class TasksService extends MongoDao<Task, Task> {
   }
 
   async getById(id: string) {
-    // const cachedItem = await this.cacheIntegration.verifyCache(id);
-    return await this.findOne({ _id: id });
+    const cachedItem = await this.cacheIntegration.consumeCache(id);
+    // return await this.findOne({ _id: id });
 
-    // if (!cachedItem) {
-
-    //   await this.cacheIntegration.consumeCache(id, retrivedItem);
-    //   return retrivedItem;
-    // }
-    // return cachedItem;
+    if (!cachedItem) {
+      const retrivedItem = await this.findOne({ _id: id });
+      await this.cacheIntegration.cacheInto(CacheType.redis, id, retrivedItem);
+      return retrivedItem;
+    }
+    return cachedItem;
   }
 
   async createTask(task: Task) {
