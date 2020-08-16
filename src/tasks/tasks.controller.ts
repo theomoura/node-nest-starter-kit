@@ -19,6 +19,11 @@ export class TasksController {
     return this.taskService.getAll();
   }
 
+  @Get('/getUsers')
+  async getUsers(): Promise<any> {
+    return this.taskService.getUsers();
+  }
+
   @Get(':id')
   async getById(@Param('id') id: string): Promise<Task> {
     return this.taskService.getById(id);
